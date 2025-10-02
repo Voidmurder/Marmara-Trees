@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marmara Ağaçları - Ağaç Bilgi Sistemi</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --primary: #0f3d2c;
+            --secondary: #1a5d3f;
+            --accent: #7ed957;
+            --accent-bright: #a3ff6d;
+            --light: #ffffff;
+            --dark: #060d0a;
+            --glass: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --shadow: rgba(0, 0, 0, 0.3);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(ellipse at top, #1a5d3f 0%, #0f3d2c 50%, #060d0a 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(126, 217, 87, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(26, 93, 63, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(163, 255, 109, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            position: relative;
+            z-index: 1;
+        }
+        
+        header {
+            text-align: center;
+            padding: 80px 40px;
+            background: linear-gradient(135deg, rgba(26, 93, 63, 0.4) 0%, rgba(15, 61, 44, 0.4) 100%);
+            border-radius: 32px;
+            margin-bottom: 60px;
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 30px 60px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(126, 217, 87, 0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        
+        header > * {
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            text-shadow: 0 0 40px rgba(126, 217, 87, 0.3);
+        }
+        
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.4rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        
+        .qr-icon {
+            font-size: 3rem;
+            color: var(--accent);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            background: rgba(126, 217, 87, 0.1);
+            border-radius: 20px;
+            border: 1px solid rgba(126, 217, 87, 0.2);
+        }
+        
+        .qr-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 0 0 30px rgba(126, 217, 87, 0.4);
+        }
+        
+        .qr-icon.spinning {
+            animation: spin 1s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg) scale(1); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+        
+        .card {
+            background: var(--glass);
+            border-radius: 32px;
+            padding: 50px;
+            margin-bottom: 40px;
+            backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 60px var(--shadow);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
+            border-color: rgba(126, 217, 87, 0.2);
+        }
+        
+        .tree-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .tree-title {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .tree-title-icon {
+            font-size: 3.5rem;
+            color: var(--accent);
+            background: rgba(126, 217, 87, 0.1);
+            width: 80px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+            border: 1px solid rgba(126, 217, 87, 0.2);
+        }
+        
+        .tree-title-text {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: var(--accent-bright);
+            letter-spacing: -0.5px;
+        }
+        
+        .tree-subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            font-style: italic;
+            margin-top: 5px;
+        }
+        
+        .tree-id {
+            background: linear-gradient(135deg, var(--accent) 0%, #5fb843 100%);
+            color: var(--dark);
+            padding: 12px 24px;
+            border-radius: 16px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            box-shadow: 0 8px 20px rgba(126, 217, 87, 0.3);
+        }
+        
+        .tree-display {
+            display: grid;
+            grid-template-columns: 1fr 1.3fr;
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+        
+        .tree-image {
+            border-radius: 28px;
+            overflow: hidden;
+            height: 500px;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--glass-border);
+        }
+        
+        .tree-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .tree-image:hover img {
+            transform: scale(1.08);
+        }
+        
+        .tree-image::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
+            pointer-events: none;
+        }
+        
+        .tree-details {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        
+        .detail-item {
+            padding: 24px;
+            background: linear-gradient(135deg, rgba(26, 93, 63, 0.3) 0%, rgba(15, 61, 44, 0.2) 100%);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+            display: grid;
+            grid-template-columns: 180px 1fr;
+            gap: 20px;
+            align-items: start;
+        }
+        
+        .detail-item:hover {
+            background: linear-gradient(135deg, rgba(26, 93, 63, 0.4) 0%, rgba(15, 61, 44, 0.3) 100%);
+            transform: translateX(8px);
+            border-color: rgba(126, 217, 87, 0.3);
+        }
+        
+        .detail-label {
+            font-weight: 700;
+            color: var(--accent);
+            font-size: 1.05rem;
+            letter-spacing: 0.3px;
+        }
+        
+        .detail-value {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+            line-height: 1.6;
+        }
+        
+        .scientific-name {
+            font-style: italic;
+            color: var(--accent-bright);
+        }
+        
+        h2 {
+            color: var(--accent-bright);
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        h2 i {
+            margin-right: 20px;
+            font-size: 2.8rem;
+            background: rgba(126, 217, 87, 0.1);
+            width: 70px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 18px;
+        }
+        
+        h3 {
+            color: var(--accent-bright);
+            font-size: 2rem;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+        
+        .tree-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-top: 30px;
+        }
+        
+        .tree-btn {
+            background: linear-gradient(135deg, rgba(26, 93, 63, 0.3) 0%, rgba(15, 61, 44, 0.2) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            color: var(--text-primary);
+            padding: 24px 28px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+            font-size: 1.15rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .tree-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(126, 217, 87, 0.2), transparent);
+            transition: left 0.6s ease;
+        }
+        
+        .tree-btn:hover::before {
+            left: 100%;
+        }
+        
+        .tree-btn:hover {
+            background: linear-gradient(135deg, rgba(126, 217, 87, 0.2) 0%, rgba(95, 184, 67, 0.2) 100%);
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(126, 217, 87, 0.3);
+            border-color: var(--accent);
+        }
+        
+        .tree-btn i {
+            font-size: 2rem;
+            color: var(--accent);
+        }
+        
+        .map-container {
+            height: 500px;
+            border-radius: 28px;
+            margin-top: 30px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 20px 50px var(--shadow);
+            overflow: hidden;
+        }
+        
+        #tree-map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 40px;
+            margin-top: 60px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--glass-border);
+            font-size: 1.1rem;
+        }
+        
+        .leaflet-container {
+            background: #0f3d2c;
+        }
+        
+        .leaflet-popup-content-wrapper {
+            background: linear-gradient(135deg, rgba(26, 93, 63, 0.95) 0%, rgba(15, 61, 44, 0.95) 100%);
+            color: white;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(126, 217, 87, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+        
+        .leaflet-popup-tip {
+            background: rgba(26, 93, 63, 0.95);
+        }
+        
+        .leaflet-control-zoom a {
+            background: rgba(26, 93, 63, 0.9) !important;
+            color: var(--accent) !important;
+            border: 1px solid rgba(126, 217, 87, 0.3) !important;
+            border-radius: 8px !important;
+            font-weight: bold;
+        }
+        
+        .leaflet-control-zoom a:hover {
+            background: rgba(126, 217, 87, 0.3) !important;
+        }
+        
+        .easter-egg-message {
+            position: fixed;
+            top: 70%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, rgba(26, 93, 63, 0.98) 0%, rgba(15, 61, 44, 0.98) 100%);
+            color: var(--accent-bright);
+            padding: 40px 60px;
+            border-radius: 24px;
+            font-size: 2rem;
+            font-weight: 800;
+            z-index: 10000;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border: 2px solid var(--accent);
+            animation: easterEggPop 3s ease;
+            display: none;
+        }
+        
+        @keyframes easterEggPop {
+            0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+            10% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            20% { transform: translate(-50%, -50%) scale(1); }
+            80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+            100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
+        }
+        
+        .intro-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            line-height: 1.8;
+        }
+        
+        @media (max-width: 1024px) {
+            .tree-display {
+                grid-template-columns: 1fr;
+            }
+            
+            .detail-item {
+                grid-template-columns: 1fr;
+            }
+            
+            .tree-info-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.8rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
+            }
+            
+            .card {
+                padding: 30px;
+            }
+            
+            .tree-title-text {
+                font-size: 2rem;
+            }
+            
+            .tree-image {
+                height: 400px;
+            }
+            
+            .tree-selector {
+                grid-template-columns: 1fr;
+            }
+            
+            h2 {
+                font-size: 2rem;
+            }
+            
+            .map-container {
+                height: 400px;
+            }
+        }
+        
+        .fade-in {
+            animation: fadeInUp 0.8s ease;
+        }
+        
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(40px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        .popup-btn {
+            margin-top: 12px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--accent) 0%, #5fb843 100%);
+            color: var(--dark);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(126, 217, 87, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌳 Marmara Ağaçları</h1>
+            <p class="subtitle">Ağacın türünü, yaşını ve ekolojik önemini öğrenmek için QR kodunu tarayın veya aşağıdaki listeden seçin.</p>
+            <div class="qr-icon" id="qr-easter-egg">
+                <i class="fas fa-qrcode"></i>
+            </div>
+        </header>
+        
+        <div class="card">
+            <div class="tree-info-header">
+                <div class="tree-title">
+                    <div class="tree-title-icon">
+                        <i class="fas fa-tree"></i>
+                    </div>
+                    <div>
+                        <div class="tree-title-text" id="current-tree-name">Ağaçları Keşfedin</div>
+                        <div class="tree-subtitle" id="current-tree-subtitle">Aşağıdaki listeden bir ağaç seçin</div>
+                    </div>
+                </div>
+                <span id="current-tree-id" class="tree-id" style="display: none;">ID: <span id="tree-id-value"></span></span>
+            </div>
+            
+            <div id="tree-content">
+                <div id="tree-info" class="fade-in">
+                    <div class="tree-display">
+                        <div class="tree-image" id="tree-image-container">
+                            <img src="https://i.imgur.com/Dvxs6gc.jpeg" id="tree-image" alt="Ağaç görseli">
+                        </div>
+                        <div class="tree-details">
+                            <div class="detail-item">
+                                <span class="detail-label">Bilimsel Adı</span>
+                                <span class="detail-value scientific-name" id="scientific-name">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Yaygın Adı</span>
+                                <span class="detail-value" id="common-name">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Yaşı</span>
+                                <span class="detail-value" id="age">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Yüksekliği</span>
+                                <span class="detail-value" id="height">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Çapı</span>
+                                <span class="detail-value" id="diameter">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Kampüsteki Konum</span>
+                                <span class="detail-value" id="location">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Ekolojik Önemi</span>
+                                <span class="detail-value" id="ecology">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Tarihsel Önemi</span>
+                                <span class="detail-value" id="history">-</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <h3><i class="fas fa-map-marker-alt"></i> Kampüs Konumu</h3>
+                    <div class="map-container">
+                        <div id="tree-map"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2><i class="fas fa-forest"></i> Tüm Ağaçları Keşfedin</h2>
+            <p class="intro-text">Marmara Eğitim Köyü kampüsümüzdeki her ağaç, kendi özel hikayesini ve ekolojik önemini taşıyor. Detayları öğrenmek için bir ağaç seçin.</p>
+            
+            <div class="tree-selector">
+                <button class="tree-btn" data-tree="oak">
+                    <i class="fas fa-tree"></i> İngiliz Meşesi
+                </button>
+                <button class="tree-btn" data-tree="maple">
+                    <i class="fas fa-leaf"></i> Şeker Akçaağacı
+                </button>
+                <button class="tree-btn" data-tree="pine">
+                    <i class="fas fa-tree"></i> Beyaz Çam
+                </button>
+                <button class="tree-btn" data-tree="birch">
+                    <i class="fas fa-tree"></i> Kağıt Huş
+                </button>
+                <button class="tree-btn" data-tree="willow">
+                    <i class="fas fa-tree"></i> Salkım Söğüt
+                </button>
+            </div>
+        </div>
+        
+        <footer>
+            <p>🌿 Marmara Ağaçları Projesi © 2025 | Biyoloji Sınıfı</p>
+            <p style="margin-top: 10px; font-size: 0.95rem;">Marmara Eğitim Köyü, Büyükbakkalköy Mah. Büyükbakkalköy Yolu Sk. No:39, 34857 Maltepe / İSTANBUL</p>
+        </footer>
+    </div>
+
+    <div class="easter-egg-message" id="easter-egg-message">
+        🌟 Doğa Keşfedilmeyi Bekliyor! 🌟
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const trees = {
+            oak: {
+                id: "T001",
+                commonName: "İngiliz Meşesi",
+                scientificName: "Quercus robur",
+                age: "Yaklaşık 85 yıl",
+                height: "22 metre",
+                diameter: "1.2 metre",
+                location: "Ana giriş yakınında, kampüsün batı tarafı",
+                ecology: "280'den fazla böcek türüne ve çok sayıda kuş türüne ev sahipliği yapar. Meşe palamudu sincaplar ve geyikler dahil yaban hayatı için besin kaynağıdır.",
+                history: "1938 yılında okulun kuruluş töreninin bir parçası olarak dikilmiştir. 1987'deki büyük fırtınadan sağ çıkmıştır.",
+                mapLocation: "Ana Meydan - Batı Tarafı",
+                image: "https://i.imgur.com/Dvxs6gc.jpeg",
+                coordinates: [40.9250, 29.1660]
+            },
+            maple: {
+                id: "T002",
+                commonName: "Şeker Akçaağacı",
+                scientificName: "Acer saccharum",
+                age: "Yaklaşık 60 yıl",
+                height: "18 metre",
+                diameter: "0.9 metre",
+                location: "Fen binasının arkası, göletin yanı",
+                ecology: "İlkbaharda arılar için önemli bir nektar kaynağıdır. Yaprakları sonbaharda zengin kompost sağlar. Tohumları kuşlar ve küçük memeliler tarafından yenir.",
+                history: "1963 mezunları tarafından mezuniyetlerini anmak için dikilmiştir. Muhteşem sonbahar renkleriyle bilinir.",
+                mapLocation: "Fen Binası - Doğu",
+                image: "https://i.imgur.com/Dvxs6gc.jpeg",
+                coordinates: [40.9245, 29.1672]
+            },
+            pine: {
+                id: "T003",
+                commonName: "Doğu Beyaz Çamı",
+                scientificName: "Pinus strobus",
+                age: "Yaklaşık 95 yıl",
+                height: "25 metre",
+                diameter: "1.1 metre",
+                location: "Kampüsün kuzey ucu, spor sahalarının yanı",
+                ecology: "Kuşlar için yıl boyunca barınak sağlar. Çam kozalakları sincaplar ve çapkın kuşları için besin sunar. İğneleri belirli alt bitkileri destekleyen asidik toprak oluşturur.",
+                history: "Okul inşa edilmeden önceki orijinal ağaçlardan biridir. Mülkün kuzey sınırını işaretlemek için kullanılmıştır.",
+                mapLocation: "Spor Sahası - Kuzey Kenarı",
+                image: "https://i.imgur.com/Dvxs6gc.jpeg",
+                coordinates: [40.9255, 29.1670]
+            },
+            birch: {
+                id: "T004",
+                commonName: "Kağıt Huş",
+                scientificName: "Betula papyrifera",
+                age: "Yaklaşık 40 yıl",
+                height: "15 metre",
+                diameter: "0.5 metre",
+                location: "Kütüphane ile sanat merkezi arasındaki avluda",
+                ecology: "Çeşitli kelebek ve güve türlerini destekler. Soyulan kabuğu kuşlar için yuva malzemesi sağlar. Diğer ağaçlar için toprağı hazırlamaya yardımcı olan öncü bir türdür.",
+                history: "1983'teki kampüs yenileme projesi sırasında dikilmiştir. Kışın avluyu aydınlatan ayırt edici beyaz kabuğu için seçilmiştir.",
+                mapLocation: "Merkezi Avlu",
+                image: "https://i.imgur.com/Dvxs6gc.jpeg",
+                coordinates: [40.9247, 29.1667]
+            },
+            willow: {
+                id: "T005",
+                commonName: "Salkım Söğüt",
+                scientificName: "Salix babylonica",
+                age: "Yaklaşık 50 yıl",
+                height: "12 metre",
+                diameter: "0.8 metre",
+                location: "Kampüs göleti kenarında, güney tarafı",
+                ecology: "Gölet için önemli gölge sağlayarak su sıcaklığını düzenlemeye yardımcı olur. Kökleri gölet kıyılarını stabilize eder. Tomurcukları arılar için erken ilkbahar poleni sağlar.",
+                history: "1973'te vefat eden sevilen bir öğretmenin anısına dikilmiştir. Suya ulaşan zarif, süpürücü dallarıyla bilinir.",
+                mapLocation: "Gölet - Güney Kıyısı",
+                image: "https://i.imgur.com/Dvxs6gc.jpeg",
+                coordinates: [40.9240, 29.1665]
+            }
+        };
+
+        let map;
+        let markers = [];
+        let isSpinning = false;
+
+        function setupQREasterEgg() {
+            const qrIcon = document.getElementById('qr-easter-egg');
+            const message = document.getElementById('easter-egg-message');
+            
+            qrIcon.addEventListener('click', function() {
+                if (!isSpinning) {
+                    isSpinning = true;
+                    qrIcon.classList.add('spinning');
+                    message.style.display = 'block';
+                    
+                    setTimeout(function() {
+                        qrIcon.classList.remove('spinning');
+                        message.style.display = 'none';
+                        isSpinning = false;
+                    }, 3000);
+                }
+            });
+        }
+
+        function initMap(center = [40.9247, 29.1667], zoom = 16) {
+            if (map) {
+                map.remove();
+            }
+            
+            map = L.map('tree-map').setView(center, zoom);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 19
+            }).addTo(map);
+            
+            addAllTreeMarkers();
+        }
+
+        function addAllTreeMarkers() {
+            markers.forEach(marker => map.removeLayer(marker));
+            markers = [];
+            
+            Object.entries(trees).forEach(([key, tree]) => {
+                const customIcon = L.divIcon({
+                    className: 'custom-marker',
+                    html: `<div style="
+                        background: linear-gradient(135deg, #7ed957 0%, #5fb843 100%);
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50% 50% 0 50%;
+                        transform: rotate(-45deg);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        box-shadow: 0 4px 12px rgba(126, 217, 87, 0.4);
+                        border: 2px solid #0f3d2c;
+                    ">
+                        <i class="fas fa-tree" style="
+                            color: #0f3d2c;
+                            font-size: 18px;
+                            transform: rotate(45deg);
+                        "></i>
+                    </div>`,
+                    iconSize: [40, 40],
+                    iconAnchor: [20, 40]
+                });
+                
+                const marker = L.marker(tree.coordinates, { icon: customIcon })
+                    .addTo(map)
+                    .bindPopup(`
+                        <div style="text-align: center; padding: 10px;">
+                            <h3 style="margin: 0 0 8px; color: #7ed957; font-size: 1.3rem;">${tree.commonName}</h3>
+                            <p style="margin: 0 0 8px; font-style: italic; color: #a3ff6d;">${tree.scientificName}</p>
+                            <p style="margin: 0 0 12px; color: rgba(255,255,255,0.8); font-size: 0.9rem;">${tree.mapLocation}</p>
+                            <button class="popup-btn" onclick="displayTree('${key}')">
+                                Detayları Gör
+                            </button>
+                        </div>
+                    `);
+                
+                markers.push(marker);
+            });
+        }
+
+        function focusOnTree(coordinates) {
+            map.setView(coordinates, 18, {
+                animate: true,
+                duration: 1
+            });
+            
+            markers.forEach(marker => {
+                const markerLatLng = marker.getLatLng();
+                if (Math.abs(markerLatLng.lat - coordinates[0]) < 0.0001 && 
+                    Math.abs(markerLatLng.lng - coordinates[1]) < 0.0001) {
+                    marker.openPopup();
+                }
+            });
+        }
+
+        function displayTree(treeType) {
+            const tree = trees[treeType];
+            if (!tree) return;
+            
+            document.getElementById('current-tree-name').textContent = tree.commonName;
+            document.getElementById('current-tree-subtitle').textContent = tree.scientificName;
+            document.getElementById('tree-id-value').textContent = tree.id;
+            document.getElementById('current-tree-id').style.display = 'inline-block';
+            
+            document.getElementById('scientific-name').textContent = tree.scientificName;
+            document.getElementById('common-name').textContent = tree.commonName;
+            document.getElementById('age').textContent = tree.age;
+            document.getElementById('height').textContent = tree.height;
+            document.getElementById('diameter').textContent = tree.diameter;
+            document.getElementById('location').textContent = tree.location;
+            document.getElementById('ecology').textContent = tree.ecology;
+            document.getElementById('history').textContent = tree.history;
+            
+            const treeImage = document.getElementById('tree-image');
+            treeImage.src = tree.image;
+            treeImage.alt = tree.commonName;
+            
+            focusOnTree(tree.coordinates);
+            
+            const newUrl = window.location.origin + window.location.pathname + '?tree=' + treeType;
+            window.history.replaceState({ path: newUrl }, '', newUrl);
+            
+            document.getElementById('tree-info').classList.remove('fade-in');
+            void document.getElementById('tree-info').offsetWidth;
+            document.getElementById('tree-info').classList.add('fade-in');
+            
+            document.getElementById('tree-info').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+
+        function checkUrlForTree() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const treeParam = urlParams.get('tree');
+            
+            if (treeParam && trees[treeParam]) {
+                displayTree(treeParam);
+            } else {
+                displayTree('oak');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            setupQREasterEgg();
+            initMap();
+            checkUrlForTree();
+            
+            const treeButtons = document.querySelectorAll('.tree-btn');
+            treeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const treeType = this.getAttribute('data-tree');
+                    displayTree(treeType);
+                });
+            });
+            
+            console.log("🌳 Örnek QR Kod URL'leri:");
+            console.log("Meşe: " + window.location.origin + window.location.pathname + "?tree=oak");
+            console.log("Akçaağaç: " + window.location.origin + window.location.pathname + "?tree=maple");
+            console.log("Çam: " + window.location.origin + window.location.pathname + "?tree=pine");
+            console.log("Huş: " + window.location.origin + window.location.pathname + "?tree=birch");
+            console.log("Söğüt: " + window.location.origin + window.location.pathname + "?tree=willow");
+        });
+    </script>
+</body>
+</html>

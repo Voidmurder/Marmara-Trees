@@ -63,13 +63,13 @@
         
         header {
             text-align: center;
-            padding: 80px 40px;
+            padding: 60px 30px;
             background: linear-gradient(135deg, rgba(26, 93, 63, 0.4) 0%, rgba(15, 61, 44, 0.4) 100%);
-            border-radius: 32px;
-            margin-bottom: 60px;
+            border-radius: 28px;
+            margin-bottom: 40px;
             backdrop-filter: blur(40px);
             border: 1px solid var(--glass-border);
-            box-shadow: 0 30px 60px var(--shadow);
+            box-shadow: 0 20px 50px var(--shadow);
             position: relative;
             overflow: hidden;
         }
@@ -96,38 +96,37 @@
         }
         
         h1 {
-            font-size: 4rem;
+            font-size: clamp(2rem, 8vw, 4rem);
             font-weight: 800;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             background: linear-gradient(135deg, var(--accent-bright) 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             letter-spacing: -1px;
-            text-shadow: 0 0 40px rgba(126, 217, 87, 0.3);
         }
         
         .subtitle {
             color: var(--text-secondary);
-            font-size: 1.4rem;
+            font-size: clamp(1rem, 3vw, 1.4rem);
             max-width: 700px;
-            margin: 0 auto 30px;
+            margin: 0 auto 24px;
             line-height: 1.7;
             font-weight: 400;
         }
         
         .qr-icon {
-            font-size: 3rem;
+            font-size: clamp(2rem, 6vw, 3rem);
             color: var(--accent);
             cursor: pointer;
             transition: all 0.3s ease;
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            width: 80px;
-            height: 80px;
+            width: clamp(60px, 15vw, 80px);
+            height: clamp(60px, 15vw, 80px);
             background: rgba(126, 217, 87, 0.1);
-            border-radius: 20px;
+            border-radius: 16px;
             border: 1px solid rgba(126, 217, 87, 0.2);
         }
         
@@ -148,9 +147,9 @@
         
         .card {
             background: var(--glass);
-            border-radius: 32px;
-            padding: 50px;
-            margin-bottom: 40px;
+            border-radius: 24px;
+            padding: clamp(24px, 5vw, 50px);
+            margin-bottom: 32px;
             backdrop-filter: blur(40px);
             border: 1px solid var(--glass-border);
             box-shadow: 0 20px 60px var(--shadow);
@@ -158,7 +157,7 @@
         }
         
         .card:hover {
-            transform: translateY(-8px);
+            transform: translateY(-4px);
             box-shadow: 0 30px 80px rgba(0, 0, 0, 0.4);
             border-color: rgba(126, 217, 87, 0.2);
         }
@@ -167,65 +166,75 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
             flex-wrap: wrap;
-            gap: 20px;
+            gap: 16px;
         }
         
         .tree-title {
             display: flex;
             align-items: center;
-            gap: 20px;
+            gap: 16px;
+            flex: 1;
+            min-width: 0;
         }
         
         .tree-title-icon {
-            font-size: 3.5rem;
+            font-size: clamp(2rem, 6vw, 3.5rem);
             color: var(--accent);
             background: rgba(126, 217, 87, 0.1);
-            width: 80px;
-            height: 80px;
+            width: clamp(50px, 12vw, 80px);
+            height: clamp(50px, 12vw, 80px);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 20px;
+            border-radius: 16px;
             border: 1px solid rgba(126, 217, 87, 0.2);
+            flex-shrink: 0;
+        }
+        
+        .tree-title-content {
+            flex: 1;
+            min-width: 0;
         }
         
         .tree-title-text {
-            font-size: 2.8rem;
+            font-size: clamp(1.5rem, 5vw, 2.8rem);
             font-weight: 800;
             color: var(--accent-bright);
             letter-spacing: -0.5px;
+            word-wrap: break-word;
         }
         
         .tree-subtitle {
             color: var(--text-muted);
-            font-size: 1.2rem;
+            font-size: clamp(0.9rem, 3vw, 1.2rem);
             font-style: italic;
-            margin-top: 5px;
+            margin-top: 4px;
         }
         
         .tree-id {
             background: linear-gradient(135deg, var(--accent) 0%, #5fb843 100%);
             color: var(--dark);
-            padding: 12px 24px;
-            border-radius: 16px;
-            font-size: 1.1rem;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
             font-weight: 700;
             box-shadow: 0 8px 20px rgba(126, 217, 87, 0.3);
+            white-space: nowrap;
         }
         
         .tree-display {
             display: grid;
-            grid-template-columns: 1fr 1.3fr;
-            gap: 50px;
-            margin-bottom: 50px;
+            grid-template-columns: 1fr;
+            gap: 32px;
+            margin-bottom: 40px;
         }
         
         .tree-image {
-            border-radius: 28px;
+            border-radius: 20px;
             overflow: hidden;
-            height: 500px;
+            height: clamp(300px, 60vw, 500px);
             position: relative;
             box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
             border: 1px solid var(--glass-border);
@@ -239,7 +248,7 @@
         }
         
         .tree-image:hover img {
-            transform: scale(1.08);
+            transform: scale(1.05);
         }
         
         .tree-image::after {
@@ -248,7 +257,7 @@
             bottom: 0;
             left: 0;
             right: 0;
-            height: 50%;
+            height: 40%;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.6), transparent);
             pointer-events: none;
         }
@@ -256,97 +265,166 @@
         .tree-details {
             display: flex;
             flex-direction: column;
-            gap: 18px;
+            gap: 12px;
         }
         
         .detail-item {
-            padding: 24px;
+            padding: 16px 20px;
             background: linear-gradient(135deg, rgba(26, 93, 63, 0.3) 0%, rgba(15, 61, 44, 0.2) 100%);
-            border-radius: 20px;
+            border-radius: 16px;
             border: 1px solid var(--glass-border);
             transition: all 0.3s ease;
-            display: grid;
-            grid-template-columns: 180px 1fr;
-            gap: 20px;
-            align-items: start;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
         }
         
         .detail-item:hover {
             background: linear-gradient(135deg, rgba(26, 93, 63, 0.4) 0%, rgba(15, 61, 44, 0.3) 100%);
-            transform: translateX(8px);
+            transform: translateX(4px);
             border-color: rgba(126, 217, 87, 0.3);
         }
         
         .detail-label {
             font-weight: 700;
             color: var(--accent);
-            font-size: 1.05rem;
+            font-size: clamp(0.95rem, 3vw, 1.05rem);
             letter-spacing: 0.3px;
         }
         
         .detail-value {
             color: var(--text-secondary);
-            font-size: 1.05rem;
+            font-size: clamp(0.95rem, 3vw, 1.05rem);
             line-height: 1.6;
         }
         
         .scientific-name {
             font-style: italic;
             color: var(--accent-bright);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        
+        .wiki-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--accent);
+            text-decoration: none;
+            padding: 6px 12px;
+            background: rgba(126, 217, 87, 0.1);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(126, 217, 87, 0.2);
+        }
+        
+        .wiki-link:hover {
+            background: rgba(126, 217, 87, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(126, 217, 87, 0.3);
+        }
+        
+        .wiki-link i {
+            font-size: 0.85rem;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, rgba(26, 93, 63, 0.3) 0%, rgba(15, 61, 44, 0.2) 100%);
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(126, 217, 87, 0.2);
+        }
+        
+        .stat-icon {
+            font-size: 2rem;
+            color: var(--accent);
+            margin-bottom: 8px;
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--accent-bright);
+            margin-bottom: 4px;
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
         }
         
         h2 {
             color: var(--accent-bright);
-            margin-bottom: 30px;
+            margin-bottom: 24px;
             display: flex;
             align-items: center;
-            font-size: 2.5rem;
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
             font-weight: 800;
             letter-spacing: -0.5px;
+            flex-wrap: wrap;
+            gap: 12px;
         }
         
         h2 i {
-            margin-right: 20px;
-            font-size: 2.8rem;
+            font-size: clamp(4rem, 10vw, 4rem);
             background: rgba(126, 217, 87, 0.1);
-            width: 70px;
-            height: 70px;
+            width: clamp(50px, 12vw, 70px);
+            height: clamp(50px, 12vw, 70px);
             display: flex;
             align-items: center;
             justify-content: center;
-            border-radius: 18px;
+            border-radius: 14px;
+            flex-shrink: 0;
         }
         
         h3 {
             color: var(--accent-bright);
-            font-size: 2rem;
-            margin-bottom: 25px;
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             font-weight: 700;
         }
         
         .tree-selector {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            margin-top: 30px;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
         }
         
         .tree-btn {
             background: linear-gradient(135deg, rgba(26, 93, 63, 0.3) 0%, rgba(15, 61, 44, 0.2) 100%);
             border: 1px solid var(--glass-border);
-            border-radius: 20px;
+            border-radius: 16px;
             color: var(--text-primary);
-            padding: 24px 28px;
+            padding: 20px;
             cursor: pointer;
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 12px;
             font-weight: 700;
-            font-size: 1.15rem;
+            font-size: clamp(1rem, 3vw, 1.15rem);
             position: relative;
             overflow: hidden;
         }
@@ -368,20 +446,21 @@
         
         .tree-btn:hover {
             background: linear-gradient(135deg, rgba(126, 217, 87, 0.2) 0%, rgba(95, 184, 67, 0.2) 100%);
-            transform: translateY(-8px);
-            box-shadow: 0 15px 35px rgba(126, 217, 87, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(126, 217, 87, 0.3);
             border-color: var(--accent);
         }
         
         .tree-btn i {
-            font-size: 2rem;
+            font-size: clamp(1.5rem, 4vw, 2rem);
             color: var(--accent);
+            flex-shrink: 0;
         }
         
         .map-container {
-            height: 500px;
-            border-radius: 28px;
-            margin-top: 30px;
+            height: clamp(300px, 60vw, 500px);
+            border-radius: 20px;
+            margin-top: 24px;
             border: 1px solid var(--glass-border);
             box-shadow: 0 20px 50px var(--shadow);
             overflow: hidden;
@@ -394,11 +473,11 @@
         
         footer {
             text-align: center;
-            padding: 40px;
-            margin-top: 60px;
+            padding: 32px 20px;
+            margin-top: 48px;
             color: var(--text-muted);
             border-top: 1px solid var(--glass-border);
-            font-size: 1.1rem;
+            font-size: clamp(0.9rem, 3vw, 1.1rem);
         }
         
         .leaflet-container {
@@ -437,9 +516,9 @@
             transform: translate(-50%, -50%);
             background: linear-gradient(135deg, rgba(26, 93, 63, 0.98) 0%, rgba(15, 61, 44, 0.98) 100%);
             color: var(--accent-bright);
-            padding: 40px 60px;
-            border-radius: 24px;
-            font-size: 2rem;
+            padding: 32px 48px;
+            border-radius: 20px;
+            font-size: clamp(1.5rem, 5vw, 2rem);
             font-weight: 800;
             z-index: 10000;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
@@ -447,69 +526,130 @@
             border: 2px solid var(--accent);
             animation: easterEggPop 3s ease;
             display: none;
+            text-align: center;
+            max-width: 90%;
         }
         
         @keyframes easterEggPop {
             0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-            10% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+            10% { opacity: 1; transform: translate(-50%, -50%) scale(1.05); }
             20% { transform: translate(-50%, -50%) scale(1); }
             80% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
             100% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
         }
         
         .intro-text {
-            font-size: 1.2rem;
+            font-size: clamp(1rem, 3vw, 1.2rem);
             color: var(--text-secondary);
-            margin-bottom: 15px;
+            margin-bottom: 12px;
             line-height: 1.8;
         }
         
-        @media (max-width: 1024px) {
+        .popup-btn {
+            margin-top: 12px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, var(--accent) 0%, #5fb843 100%);
+            color: var(--dark);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: clamp(0.9rem, 3vw, 1rem);
+            transition: all 0.3s ease;
+        }
+        
+        .popup-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(126, 217, 87, 0.4);
+        }
+        
+        .share-buttons {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 24px;
+        }
+        
+        .share-btn {
+            padding: 12px 20px;
+            background: linear-gradient(135deg, rgba(26, 93, 63, 0.3) 0%, rgba(15, 61, 44, 0.2) 100%);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+        
+        .share-btn:hover {
+            background: linear-gradient(135deg, rgba(126, 217, 87, 0.2) 0%, rgba(95, 184, 67, 0.2) 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(126, 217, 87, 0.3);
+        }
+        
+        .notification {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            background: linear-gradient(135deg, var(--accent) 0%, #5fb843 100%);
+            color: var(--dark);
+            padding: 16px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            box-shadow: 0 8px 24px rgba(126, 217, 87, 0.4);
+            z-index: 9999;
+            animation: slideInRight 0.4s ease;
+            display: none;
+        }
+        
+        @keyframes slideInRight {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        @media (min-width: 768px) {
             .tree-display {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1.3fr;
             }
             
             .detail-item {
-                grid-template-columns: 1fr;
+                flex-direction: row;
+                align-items: start;
+            }
+            
+            .detail-label {
+                min-width: 160px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 24px 16px;
+            }
+            
+            header {
+                padding: 40px 20px;
+                margin-bottom: 32px;
+            }
+            
+            .card {
+                margin-bottom: 24px;
             }
             
             .tree-info-header {
                 flex-direction: column;
                 align-items: flex-start;
             }
-        }
-        
-        @media (max-width: 768px) {
-            h1 {
-                font-size: 2.8rem;
-            }
             
-            .subtitle {
-                font-size: 1.1rem;
-            }
-            
-            .card {
-                padding: 30px;
-            }
-            
-            .tree-title-text {
-                font-size: 2rem;
-            }
-            
-            .tree-image {
-                height: 400px;
-            }
-            
-            .tree-selector {
-                grid-template-columns: 1fr;
-            }
-            
-            h2 {
-                font-size: 2rem;
-            }
-            
-            .map-container {
-                height: 400px;
+            .notification {
+                bottom: 16px;
+                right: 16px;
+                left: 16px;
+                font-size: 0.9rem;
             }
         }
         
@@ -526,24 +666,6 @@
                 opacity: 1; 
                 transform: translateY(0); 
             }
-        }
-        
-        .popup-btn {
-            margin-top: 12px;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, var(--accent) 0%, #5fb843 100%);
-            color: var(--dark);
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-        
-        .popup-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(126, 217, 87, 0.4);
         }
     </style>
 </head>
@@ -563,7 +685,7 @@
                     <div class="tree-title-icon">
                         <i class="fas fa-tree"></i>
                     </div>
-                    <div>
+                    <div class="tree-title-content">
                         <div class="tree-title-text" id="current-tree-name">Ağaçları Keşfedin</div>
                         <div class="tree-subtitle" id="current-tree-subtitle">Aşağıdaki listeden bir ağaç seçin</div>
                     </div>
@@ -580,7 +702,12 @@
                         <div class="tree-details">
                             <div class="detail-item">
                                 <span class="detail-label">Bilimsel Adı</span>
-                                <span class="detail-value scientific-name" id="scientific-name">-</span>
+                                <span class="detail-value scientific-name">
+                                    <span id="scientific-name">-</span>
+                                    <a href="#" id="wiki-link" class="wiki-link" target="_blank" rel="noopener noreferrer">
+                                        <i class="fab fa-wikipedia-w"></i> Wikipedia
+                                    </a>
+                                </span>
                             </div>
                             <div class="detail-item">
                                 <span class="detail-label">Yaygın Adı</span>
@@ -613,6 +740,15 @@
                         </div>
                     </div>
                     
+                    <div class="share-buttons">
+                        <button class="share-btn" id="share-btn">
+                            <i class="fas fa-share-alt"></i> Paylaş
+                        </button>
+                        <button class="share-btn" id="copy-link-btn">
+                            <i class="fas fa-link"></i> Linki Kopyala
+                        </button>
+                    </div>
+                    
                     <h3><i class="fas fa-map-marker-alt"></i> Kampüs Konumu</h3>
                     <div class="map-container">
                         <div id="tree-map"></div>
@@ -620,9 +756,13 @@
                 </div>
             </div>
         </div>
-        
         <div class="card">
-            <h2><i class="fas fa-forest"></i> Tüm Ağaçları Keşfedin</h2>
+    <h2 style="display: flex; align-items: center; gap: 12px;">
+        <div style="display: flex; align-items: center; justify-content: center; font-size: 1.5rem; width: 80px; height: 80px;">
+            <i class="fas fa-seedling"></i>
+        </div>
+        Tüm Ağaçları Keşfedin
+    </h2>
             <p class="intro-text">Marmara Eğitim Köyü kampüsümüzdeki her ağaç, kendi özel hikayesini ve ekolojik önemini taşıyor. Detayları öğrenmek için bir ağaç seçin.</p>
             
             <div class="tree-selector">
@@ -654,6 +794,8 @@
         🌟 Doğa Keşfedilmeyi Bekliyor! 🌟
     </div>
 
+    <div class="notification" id="notification"></div>
+
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         const trees = {
@@ -661,6 +803,7 @@
                 id: "T001",
                 commonName: "İngiliz Meşesi",
                 scientificName: "Quercus robur",
+                wikiUrl: "https://tr.wikipedia.org/wiki/Quercus_robur",
                 age: "Yaklaşık 85 yıl",
                 height: "22 metre",
                 diameter: "1.2 metre",
@@ -675,6 +818,7 @@
                 id: "T002",
                 commonName: "Şeker Akçaağacı",
                 scientificName: "Acer saccharum",
+                wikiUrl: "https://tr.wikipedia.org/wiki/Acer_saccharum",
                 age: "Yaklaşık 60 yıl",
                 height: "18 metre",
                 diameter: "0.9 metre",
@@ -689,6 +833,7 @@
                 id: "T003",
                 commonName: "Doğu Beyaz Çamı",
                 scientificName: "Pinus strobus",
+                wikiUrl: "https://tr.wikipedia.org/wiki/Pinus_strobus",
                 age: "Yaklaşık 95 yıl",
                 height: "25 metre",
                 diameter: "1.1 metre",
@@ -703,6 +848,7 @@
                 id: "T004",
                 commonName: "Kağıt Huş",
                 scientificName: "Betula papyrifera",
+                wikiUrl: "https://tr.wikipedia.org/wiki/Betula_papyrifera",
                 age: "Yaklaşık 40 yıl",
                 height: "15 metre",
                 diameter: "0.5 metre",
@@ -717,6 +863,7 @@
                 id: "T005",
                 commonName: "Salkım Söğüt",
                 scientificName: "Salix babylonica",
+                wikiUrl: "https://tr.wikipedia.org/wiki/Salix_babylonica",
                 age: "Yaklaşık 50 yıl",
                 height: "12 metre",
                 diameter: "0.8 metre",
@@ -732,6 +879,17 @@
         let map;
         let markers = [];
         let isSpinning = false;
+        let currentTree = null;
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
 
         function setupQREasterEgg() {
             const qrIcon = document.getElementById('qr-easter-egg');
@@ -749,6 +907,40 @@
                         isSpinning = false;
                     }, 3000);
                 }
+            });
+        }
+
+        function setupShareButtons() {
+            const shareBtn = document.getElementById('share-btn');
+            const copyLinkBtn = document.getElementById('copy-link-btn');
+            
+            shareBtn.addEventListener('click', async function() {
+                if (navigator.share && currentTree) {
+                    try {
+                        await navigator.share({
+                            title: `${currentTree.commonName} - Marmara Ağaçları`,
+                            text: `${currentTree.commonName} (${currentTree.scientificName}) hakkında bilgi edinin!`,
+                            url: window.location.href
+                        });
+                        showNotification('Paylaşım başarılı!');
+                    } catch (err) {
+                        if (err.name !== 'AbortError') {
+                            copyToClipboard();
+                        }
+                    }
+                } else {
+                    copyToClipboard();
+                }
+            });
+            
+            copyLinkBtn.addEventListener('click', copyToClipboard);
+        }
+
+        function copyToClipboard() {
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                showNotification('Link panoya kopyalandı!');
+            }).catch(() => {
+                showNotification('Link kopyalanamadı');
             });
         }
 
@@ -832,12 +1024,15 @@
             const tree = trees[treeType];
             if (!tree) return;
             
+            currentTree = tree;
+            
             document.getElementById('current-tree-name').textContent = tree.commonName;
             document.getElementById('current-tree-subtitle').textContent = tree.scientificName;
             document.getElementById('tree-id-value').textContent = tree.id;
             document.getElementById('current-tree-id').style.display = 'inline-block';
             
             document.getElementById('scientific-name').textContent = tree.scientificName;
+            document.getElementById('wiki-link').href = tree.wikiUrl;
             document.getElementById('common-name').textContent = tree.commonName;
             document.getElementById('age').textContent = tree.age;
             document.getElementById('height').textContent = tree.height;
@@ -878,6 +1073,7 @@
 
         document.addEventListener('DOMContentLoaded', function() {
             setupQREasterEgg();
+            setupShareButtons();
             initMap();
             checkUrlForTree();
             
